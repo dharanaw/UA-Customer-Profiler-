@@ -30,9 +30,41 @@ else:
     # Handle target environment that doesn't support HTTPS verification
     ssl._create_default_https_context = _create_unverified_https_context
 
+# mapping
+class sin_str(str):
+    @property
+    def __phonetics(self) -> dict:
+        return {'සිංහ':'singhe',
+                'ධා':'dha',
+                'ජී':'jee',
+                'ණ':'na',
+                'තා':'tha',
+                'ජා':'ja',
+                'සු':'su',
+                'වී':'wee',
+                'ම්':'m',
+                'ස්':'s',
+                'ර්':'r',
+                'හ':'ha',
+                'ර':'ra',
+                'ද':'da',
+                'ස':'sa',
+                'ව':'wa',
+                'ල':'la',
+                'න':'na',
+                ' ':' '
+               }
+    
+    @property
+    def transliteration(self) -> str:
+        p,t = self.__phonetics, self [:]
+        for k,v in p.items(): t=t.replace(k, v)
+        return t
+        #return ''.join(p.get(c, None) or c for c in self)
+        
 
 
-uploaded_file = st.file_uploader("Choose a image file", type="jpg")
+uploaded_file = st.sidebar.file_uploader("Choose a image file", type="jpg")
 
 if uploaded_file is not None:
      #Convert the file to an opencv image.
@@ -45,7 +77,16 @@ if uploaded_file is not None:
 else:
     st.write("Please upload the image first")
 
-if st.button("extract and translate"):   
+#boundimg =pytesseract.image_to_data(opencv_image, output_type=Output.DICT)
+#n_boxes = len(boundimg['level'])
+#for i in range(n_boxes):
+ #   (text,x,y,w,h) = (boundimg['text'][i],boundimg['left'][i],boundimg['top'][i],boundimg['width'][i],boundimg['height'][i])
+  #  cv2.rectangle(boundimg, (x,y), (x+w,y+h) , (0,255,0), 2)
+#boxedimg=cv2.imshow('img',boundimg)
+#st.image(boundimg)
+#cv2.waitkey(0)
+
+if st.sidebar.button("extract and transliterate text"):   
 
     #text preprocessing 
         #grayscaling
@@ -84,83 +125,33 @@ if st.button("extract and translate"):
     config = ('-l sin --oem 1 --psm 3')
             # pytessercat
     pytext = pytesseract.image_to_string(result, config=config)
+  
+    alterd_pytext = pytext.replace("නම :", "")
             # print text
-    extracted_text = pytext.split('/n')
+    #extracted_text = pytext #.split('/n')
     #print(extracted_text )
 
 
-    str_value= ''.join(extracted_text)
-    st.write(extracted_text)
-
-
-
-# mapping
-class sin_str(str):
-    @property
-    def __phonetics(self) -> dict:
-        return {'සු':'su',
-                'ජා':'ja',
-                ' ':' ',
-                'තා':'tha',
-                'ව':'wa',
-                'ර්':'r',
-                'ර':'ra',
-                'න':'na',
-                'ල':'la',
-                'තා':'tha',
-                'ජී':'jee',
-                'වා':'va',
-                'න':'na',
-                'න්':'n',
-                'ද':'da',
-                'ධ':'dha',
-                'ණ':'na',
-                'උ':'u',
-                'ප':'pa',
-                'ත':'tha',
-                'හා':'haa',
-                'ධා':'dha',
-                'නා':'naa',
-                'ස':'sa',
-                'හෝ':'ho',
-                'නි':'ni',
-                'ල':'la',
-                'බා':'ba',
-                'ඇ':'ae',
-                'ත':'tha',
-                'අ':'a',
-                'ඉ':'i',
-                'ඊ':'ee',
-                'එ':'ae',
-                'ඔ':'o',
-                'ක':'ka',
-                'ග':'ga',
-                'න':'na',
-                'ත':'tha',
-                'ද':'dha',
-                'ඩ':'da',
-                'න':'na',
-                'ත':'tha',
-                'ප':'pa',
-                'බ':'ba',
-                'ම':'ma',
-                'ය':'ya',
-                'ර':'ra',
-                'ල':'la',
-                'ව':'wa',
-                'ශ':'sha',
-                'ස':'sa',
-                'හ':'ha',
-                'ල':'la',
-                'ෆ':'fa',
-                'ස්':'s'}
-                
-                
+    #str_value= ''.join(extracted_text)
+    st.write('extracted text is :' + alterd_pytext)
     
-    @property
-    def transliteration(self) -> str:
-        p = self.__phonetics
-        return ''.join(p.get(c, None) or c for c in self)
+
+    intext = sin_str(alterd_pytext)
+    st.write('Translated text is:  '+ intext.transliteration)
+
+
+
+
+    #text=input('type :')
+    #text = sin_str(text)
+   
+   
+   
+   
+   
+   
+    #print(text.transliteration) 
+    
 
 
 
@@ -168,9 +159,9 @@ class sin_str(str):
 #use
 #st.button('transliterate to english')
 
-typo =st.text_input('type in sinhala')
-intext = sin_str(typo)
-st.write(intext.transliteration) #takama
+#typo =st.text_input('type in sinhala')
+
+ #takama
     
 
 

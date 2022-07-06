@@ -2,46 +2,31 @@
 class sin_str(str):
     @property
     def __phonetics(self) -> dict:
-        return {'අ':'a',
-                'ඉ':'i',
-                'ඊ':'ee',
-                'එ':'ae',
-                'ඔ':'o',
-                'ක':'ka',
-                'ග':'ga',
-                'න':'na',
-                'ත':'tha',
-                'ද':'dha',
-                'ඩ':'da',
-                'න':'na',
-                'ත':'tha',
-                'ප':'pa',
-                'බ':'ba',
-                'ම':'ma',
-                'ය':'ya',
-                'ර':'ra',
-                'ල':'la',
-                'ව':'wa',
-                'ශ':'sha',
-                'ස':'sa',
+        return {'සිංහ':'singhe',
+                'ධා':'dha',
+                'ණ':'na',
+                'තා':'tha',
+                'ජා':'ja',
+                'සු':'su',
+                'වී':'wee',
+                'ස්':'s',
+                'ර්':'r',
                 'හ':'ha',
-                'ල':'la',
+                'ර':'ra',
                 'ෆ':'fa',
-                'කු':'ku',
-                'ක්':'k',
-                'කා':'kaa',
-                'කි':'ki',
-                'කී':'kee',
-                'ගු':'gu',
-                'ටේ':'te',
+                'ව':'wa',
+                'ම':'ma',
+                'න':'na',
                 ' ':' '
                }
     
     
     @property
     def transliteration(self) -> str:
-        p = self.__phonetics
-        return ''.join(p.get(c, None) or c for c in self)
+        p,t = self.__phonetics, self [:]
+        for k,v in p.items(): t=t.replace(k, v)
+        return t
+        #return ''.join(p.get(c, None) or c for c in self)
 
 
 while(True):
