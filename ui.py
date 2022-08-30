@@ -102,7 +102,7 @@ container=st.container()
 col1, padding, col2,  = st.columns((10,2,15))
 
 with col1:
-    st.header("user inputs")
+    st.header("Enter your details")
     nic_no = st.text_input('NIC/DL number',)
     nic_no=nic_no.lower()
     full_name =st.text_input('Full name as in NIC/DL')
@@ -123,7 +123,7 @@ with col1:
 
     
 with col2:
-    st.header('Documents upload')
+    st.header('Upload your documents')
     
     uploaded_file = st.file_uploader("Choose a file", accept_multiple_files=True)
     if uploaded_file is not None:
@@ -189,7 +189,7 @@ if magic:
     
     #files=glob.glob(dir_path+'/*jpg')
 
-    
+if uploaded_file is not None:
         for image in img_files:
             st.write('Identification document detected')
             for file_name in file_names:
