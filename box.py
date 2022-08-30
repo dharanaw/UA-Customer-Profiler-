@@ -43,7 +43,7 @@ def shape_selection(event, x, y, flags, param):
   
 # load the image, clone it, and setup the mouse callback function 
 image = input_img
-image_copy = input_img.copy()
+image_copy = image.copy()
 cv2.namedWindow("image") 
 cv2.setMouseCallback("image", shape_selection) 
   
