@@ -2,7 +2,6 @@ from csv import reader
 import difflib
 from distutils.command.install_lib import PYTHON_SOURCE_EXTENSION
 from fileinput import filename
-from genericpath import exists
 from glob import glob
 import pathlib
 import pyexpat
@@ -50,6 +49,8 @@ img_search=Path('/Users/dharanaweerasinghe/Desktop/pythonProject/nic_transcriber
 pdf_files = [str(file.absolute()) for file in pdf_search]
 img_files = [str(file.absolute()) for file in img_search]
 
+des_pdf='/Users/dharanaweerasinghe/Desktop/pythonProject/nic_transcriber/temp/pdf'
+des_jpg='/Users/dharanaweerasinghe/Desktop/pythonProject/nic_transcriber/temp/jpg'
 
 try:
     os.mkdir(dir_path)
@@ -58,19 +59,6 @@ except OSError:
 else:
     print ("Successfully created the directory ")
 
-try:
-    os.mkdir(jpg_path)
-except OSError:
-    print ("Creation of the directory %s failed" )
-else:
-    print ("Successfully created the directory ")
-
-try:
-    os.mkdir(jpg_path)
-except OSError:
-    print ("Creation of the directory %s failed" )
-else:
-    print ("Successfully created the directory ")
 
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -80,7 +68,7 @@ except AttributeError:
 else:
     # Handle target environment that doesn't support HTTPS verification
     ssl._create_default_https_context = _create_unverified_https_context
-config2 = ('-l eng+sin+typew --oem 1 --psm 3')
+config2 = ('-l eng+sin --oem 1 --psm 3')
 
 
     
@@ -92,9 +80,10 @@ config2 = ('-l eng+sin+typew --oem 1 --psm 3')
 
 
 dl_words= ('driving')
-nic_words=('national')
+nic_words=('identity card')
 proposal_words=('Union Life Plus Proposal Form - Extract of the details submitted on a digital proposal form')
 financial_words=('PERSONAL FINANCIAL NEEDS REVIEW')
+nic_words=(' srilanka national identity card')
 
     #if dl_words in pytext:
      #   st.write('dl detected')
@@ -102,6 +91,10 @@ financial_words=('PERSONAL FINANCIAL NEEDS REVIEW')
      #   st.write('nic detected')
    
 
+
+
+    
+        
 
 
 
@@ -114,12 +107,12 @@ def save_uploadedfile(uploaded_file):
 
 
 container=st.container()
-col1, padding, col2,  = st.columns((15,3,20))
+col1, padding, col2,  = st.columns((20,5,20))
 
 with col1:
     st.header("Enter Details")
     nic_no = st.text_input('NIC/DL number',)
-    #nic_no=nic_no.lower()
+    nic_no=nic_no.lower()
     full_name =st.text_input('Full name as in NIC/DL')
     full_name=full_name.lower()
     address =st.text_input('Address')
@@ -162,7 +155,7 @@ def load_images(dir_path):
         if img is not None:
             images.append(img)
             pytext = pytesseract.image_to_string(images, config=config2)
-            #st.write(pytext)
+            st.write(pytext)
      
 
 
@@ -183,105 +176,74 @@ container=st.container()
 
 
 
-
 file_names =os.listdir(dir_path)
-
-
 magic =col2.button('check')
 if magic:
-    container.subheader("Results")
-    
+    if uploaded_file is not None:
+        with st.spinner('Please wait..'):
+            container.subheader("Results")
+            
 
-    with st.spinner('Please wait..'):
-        sleep(2)
-
-        for root,dirs,files in os.walk(dir_path):
+            for root,dirs,files in os.walk(dir_path):
                 for file in files:
                     if file.endswith('.jpg'):
                         shutil.move(os.path.join(root,file), os.path.join(jpg_path,file))
                         print('moved successfully')
-                        continue
 
-
-        for pdf in pdf_files:
-        
-            with fitz.open(pdf) as doc:
-                for page in doc:
-                    text = page.get_text()
-                    #st.write(text)
-                    if financial_words in (text) :
-                        st.write('Detected : Financial review')
-                    elif proposal_words in (text):
-                        st.write('Detected : Proposal')
-
-        for image_name in os.listdir(jpg_path):
-            input_path =os.path.join(jpg_path, image_name)
-                    #imz =Image.open(dir_path + file_name)
-                    
-                    
-            imz = Image.open(input_path)
-            #st.image(imz)
-
-            pytext=pytesseract.image_to_string(imz, config=config2)
-            pytext=pytext.lower()
-            #pytext=pytext.translate(str.maketrans('', '', string.punctuation))
-            
-            #st.write(pytext)
-        
-        if magic:
-            #with st.spinner('PLEASE WAIT ...'):
-                sleep(1)
-            
-                if nic_words in (pytext):
-                    st.write('Detected : NIC')  
-                    st.write('Detected : Signature Card')  
-                elif dl_words in (pytext):
-                    st.write("Detected : Driving Licence")  
-                    #st.write('Detected : Signature Card')      
-                if not nic_no:
-                    st.write('Please enter the nic number ❗')
-                else:
-                    if nic_no in (pytext):
-                        st.write('NIC No matched   ✅')
-                    else:
-                        st.write('NIC does not match  ❌')
-                if not full_name:
-                    st.write('Please enter the full name ❗')
-                else:
-                    if full_name in(pytext):
-                        st.write('Full name matched ✅')
-                    else:
-                        st.write('Full name does not match  ❌')
-                if not address:
-                    st.write('Please enter the address ❗')
-                else:
-                    if address in(pytext):
-                        st.write('address matched ✅')
-                    else:
-                        st.write('address does not match  ❌')
-                if not dob:
-                    st.write('Please enter the birthday ❗')
-                else:
-                    if xc in (pytext):
-                        st.write('Date of Birth Matched ✅')
-                    else:
-                        st.write('Date of Birth does not match  ❌')
-                        #st.write(xc)
-
-
-       
-
-                                    
-                   
+            for pdf in pdf_files:
                 
+                with fitz.open(pdf) as doc:
+                    for page in doc:
+                        text = page.get_text()
+                        #st.write(text)
+                        if financial_words in (text) :
+                            st.write('3. Financial review detected')
+                        elif proposal_words in (text):
+                            st.write('1. Proposal detected')
+                            st.write('2. Identification document detedcted')
+                            st.write('4. Signature card detected')
+    
+            for imageName in os.listdir(jpg_path):
+                inputPath = os.path.join(jpg_path,imageName)
+                imz=Image.open(inputPath)
+                #st.image(inputPath)
+                text=pytesseract.image_to_string(imz, config=config2)
+                text=text.lower()
+                        #text=text.translate(str.maketrans('', '', string.punctuation))
+                st.write(text)
+            
+            if nic_words in (text):
+                st.write('National Identity Card detected')            
+            if not nic_no:
+                st.write('Please enter the nic number ❗')
+            else:
+                if nic_no in (text):
+                    st.write('NIC No matched ✅')
+                else:
+                    st.write('NIC does not match  ❌')
+            if not full_name:
+                st.write('Please enter the full name ❗')
+            else:
+                if full_name in(text):
+                    st.write('Full name matched ✅')
+                else:
+                    st.write('Full name does not match  ❌')
+            if not address:
+                st.write('Please enter the address ❗')
+            else:
+                if address in(text):
+                    st.write('address matched ✅')
+                else:
+                    st.write('address does not match  ❌')
+            if not dob:
+                st.write('Please enter the birthday ❗')
+            else:
+                if xc in (text):
+                    st.write('Date of Birth Matched ✅')
+                else:
+                    st.write('Date of Birth does not match  ❌')
 
-
-
-
-
-
-
-
-
-        
-   
+                    sleep(5)
+                    st.balloons()
+    else:
+        st.write('Please upload documents first')    
